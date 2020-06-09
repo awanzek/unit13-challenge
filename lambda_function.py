@@ -93,14 +93,15 @@ def validate_userdata(age, investment_amount,intent_request):
                 "You must be at least 0 years old to use this service, "
                 "please provide your age between 0-64.",
             )
-        else age>=65:
+        elif age>=65:
             return build_validation_result(
                 False,
                 "age",
                 "You must be younger than 65 years old to use this service, "
                 "please provide your age between 0-64.",
             )
-        
+    else:
+        return build_validation_result(True, None, None)    
     #validate input of investment amount 
     # Validate that the user is investing over $5000
     if investment_amount is not None:
@@ -113,7 +114,8 @@ def validate_userdata(age, investment_amount,intent_request):
             )
     #if the user age and investment amount are in the desired valid range
     # return a true validation result        
-    return build_validation_result(True, None, None)
+    else:
+        return build_validation_result(True, None, None)
 
         ### YOUR DATA VALIDATION CODE ENDS HERE ###
 
@@ -122,17 +124,17 @@ def validate_userdata(age, investment_amount,intent_request):
 def get_investment(riskLevel):
     if riskLevel=='None':
         investment="100 percent bonds (AGG), 0 percent equities (SPY)"
-    else riskLevel =='Very Low':
+    elif riskLevel =='Very Low':
         investment="80 percent bonds (AGG), 20 percent equities (SPY)"
-    else riskLevel== 'Low': 
+    elif riskLevel== 'Low': 
         investment= "60 percent bonds (AGG), 40 percent equities (SPY)"
-    else riskLevel=='Medium':
+    elif riskLevel=='Medium':
         investment="40 percent bonds (AGG), 60 percent equities (SPY)"
-    else riskLevel=='High':
+    elif riskLevel=='High':
         investment="20 percent bonds (AGG), 80 percent equities (SPY)"
-    else riskLevel=='Very High':
+    elif riskLevel=='Very High':
         investment="0 percent bonds (AGG), 100 percent equities (SPY)"
-return investment 
+    return investment 
 ### YOUR FINAL INVESTMENT RECOMMENDATION CODE ENDS HERE ###
 
 
