@@ -145,8 +145,8 @@ def recommend_portfolio(intent_request):
     """
 
     first_name = get_slots(intent_request)["firstName"]
-    age = get_slots(intent_request)["age"]
-    investment_amount = get_slots(intent_request)["investmentAmount"]
+    age = int(get_slots(intent_request)["age"])
+    investment_amount = int(get_slots(intent_request)["investmentAmount"])
     risk_level = get_slots(intent_request)["riskLevel"]
     source = intent_request["invocationSource"]
 
