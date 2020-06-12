@@ -82,42 +82,55 @@ def close(session_attributes, fulfillment_state, message):
 ### NEED A FUNCTION FOR LIMITING USERS TO AGE 0-64 
 ### AND KEEPING INVESTMENT AMOUNT 5000 OR MORE
 ### YOUR DATA VALIDATION CODE STARTS HERE ###
-def validate_userdata(age, investment_amount,intent_request):
-#validate input of age 
+def validate_userdata(age,investment_amount,intent_request):
+    #validate input of age 
     # Validate that the user is over between 0-64 years old
-    if age is not None:
-        if age <=0:
+    if age is None:
+       return build_validation_result(False, "age","Please provide your age.")
+    elif investment_amount is None:
+       return build_validation_result(False, "investmentAmount","Please provide how much you plan to invest.")
+                      
+    
+        
+    if age is not None or investment_amount is not None:
+              
+        age=int(age)
+        investment_amount=int(investment_amount)
+        
+        if age < 0:
             return build_validation_result(
                 False,
                 "age",
-                "You must be at least 0 years old to use this service, "
-                "please provide your age between 0-64.",
+                "You must be at least 0 years old to use this service, please provide your age between 0-64."
             )
-        elif age>=65:
+        if age>=65:
             return build_validation_result(
                 False,
                 "age",
-                "You must be younger than 65 years old to use this service, "
-                "please provide your age between 0-64.",
-            )
-    else:
-        return build_validation_result(True, None, None)    
-    #validate input of investment amount 
-    # Validate that the user is investing over $5000
-    if investment_amount is not None:
-        if investment_amount <5000:
+                "You must be younger than 65 years old to use this service, please provide your age between 0-64."
+            )    
+        #validate input of investment amount 
+        # Validate that the user is investing over $5000
+        elif investment_amount<5000:
             return build_validation_result(
                 False,
-                "investment_amount",
-                "You must invest at least $5000 to use this service, "
-                "please provide an higher investment amount.",
+                "investmentAmount",
+                "You must invest at least $5000 to use this service,please provide an higher investment amount."
             )
-    #if the user age and investment amount are in the desired valid range
-    # return a true validation result        
-    else:
-        return build_validation_result(True, None, None)
+        elif age>=0 or age<65 or investment_amount>5000:    
+            return build_validation_result(True, None, None)
+        
+        elif investment_amount is None:
+            return build_validation_result(False, "investmentAmount","Please provide how much you plan to invest.")
+    
+             
+            
+    
+    
+    
 
         ### YOUR DATA VALIDATION CODE ENDS HERE ###
+
 
 ### NEED A FUNCTION FOR INITIAL INVESTMENT RECOMMENDATIONS
 ### YOUR FINAL INVESTMENT RECOMMENDATION CODE STARTS HERE ###
@@ -145,8 +158,8 @@ def recommend_portfolio(intent_request):
     """
 
     first_name = get_slots(intent_request)["firstName"]
-    age = int(get_slots(intent_request)["age"])
-    investment_amount = int(get_slots(intent_request)["investmentAmount"])
+    age = get_slots(intent_request)["age"]
+    investment_amount = get_slots(intent_request)["investmentAmount"]
     risk_level = get_slots(intent_request)["riskLevel"]
     source = intent_request["invocationSource"]
 
@@ -159,14 +172,14 @@ def recommend_portfolio(intent_request):
         slots=get_slots(intent_request)
         ### YOUR DATA VALIDATION CODE STARTS HERE ###
         # Validates user's input using the validate_userdata function above
-        validation_result = validate_userdata(age, investment_amount, intent_request)
-    
+        validation_result = validate_userdata(age,investment_amount, intent_request)
+        
         # If the result of the data validation is false and the 
         # user input data is invalid
         # call the elicitSlot function to re-prompt for new input for invalid slots.
-        if not validation_result["isValid"]:
+        if validation_result["isValid"] == False:
             slots[validation_result["violatedSlot"]] = None  # Cleans invalid slot
-
+            
             # Returns an elicitSlot dialog to request new data for the invalid slot
             return elicit_slot(
                 intent_request["sessionAttributes"],
@@ -175,6 +188,8 @@ def recommend_portfolio(intent_request):
                 validation_result["violatedSlot"],
                 validation_result["message"],
             )
+            
+        
 
 
         ### YOUR DATA VALIDATION CODE ENDS HERE ###
